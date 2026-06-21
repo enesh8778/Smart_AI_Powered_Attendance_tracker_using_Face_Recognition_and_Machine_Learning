@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            background:#f8fafc;
+            font-family:'Inter',sans-serif;
+            color:#202124;
+        }
+
+        /* Navbar */
+
+        .navbar-custom{
+            background:#ffffff;
+            border-bottom:1px solid #e5e7eb;
+            padding:14px 0;
+        }
+
+        .brand{
+            font-size:24px;
+            font-weight:700;
+            color:#1a73e8;
+            text-decoration:none;
+        }
+
+        .nav-custom{
+            color:#5f6368 !important;
+            font-weight:500;
+            padding:10px 16px !important;
+            border-radius:10px;
+            transition:.2s;
+        }
+
+        .nav-custom:hover{
+            background:#f1f3f4;
+            color:#1a73e8 !important;
+        }
+
+        .nav-custom.active{
+            background:#e8f0fe;
+            color:#1a73e8 !important;
+            font-weight:600;
+        }
+
+        .btn-nav{
+            border-radius:10px;
+            font-weight:500;
+            padding:8px 16px;
+        }
+
+        /* Header */
+
+        .dashboard-title{
+            font-size:36px;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        .subtitle{
+            color:#5f6368;
+            font-size:16px;
+        }
+
+        /* Stats */
+
+        .stat-card{
+            background:#ffffff;
+            border:none;
+            border-radius:20px;
+            padding:24px;
+            box-shadow:0 2px 10px rgba(0,0,0,.06);
+            transition:.25s;
+            height:100%;
+        }
+
+        .stat-card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 12px 28px rgba(0,0,0,.10);
+        }
+
+        .label{
+            color:#5f6368;
+            font-size:14px;
+            font-weight:500;
+        }
+
+        .value{
+            font-size:42px;
+            font-weight:700;
+            margin-top:8px;
+        }
+
+        .students{
+            color:#1a73e8;
+        }
+
+        .present{
+            color:#188038;
+        }
+
+        .late{
+            color:#f9ab00;
+        }
+
+        .absent{
+            color:#d93025;
+        }
+
+        /* Attendance Table */
+
+        .attendance-card{
+            background:#ffffff;
+            border-radius:20px;
+            box-shadow:0 2px 10px rgba(0,0,0,.06);
+            overflow:hidden;
+        }
+
+        .attendance-header{
+            padding:24px;
+            border-bottom:1px solid #e5e7eb;
+        }
+
+        .attendance-header h3{
+            margin:0;
+            font-size:24px;
+            font-weight:700;
+        }
+
+        .attendance-header p{
+            margin-top:8px;
+            margin-bottom:0;
+            color:#5f6368;
+        }
+
+        .table{
+            margin-bottom:0;
+        }
+
+        .table thead th{
+            color:#5f6368;
+            font-weight:600;
+            border-bottom:2px solid #e5e7eb;
+            background:#fafafa;
+        }
+
+        .table tbody tr:hover{
+            background:#f8fafc;
+        }
+
+        /* Status Pills */
+
+        .status-pill{
+            display:inline-block;
+            padding:8px 14px;
+            border-radius:999px;
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .present-pill{
+            background:#e6f4ea;
+            color:#188038;
+        }
+
+        .late-pill{
+            background:#fef7e0;
+            color:#f9ab00;
+        }
+
+        .absent-pill{
+            background:#fce8e6;
+            color:#d93025;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+
+    <div class="container">
+
+        <a href="/dashboard"
+           class="brand">
+            Smart Attendance
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarContent">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse"
+             id="navbarContent">
+
+            <ul class="navbar-nav ms-5">
+
+                <li class="nav-item">
+                    <a class="nav-link nav-custom active"
+                       href="/dashboard">
+                        Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-custom"
+                       href="/analytics">
+                        Analytics
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-custom"
+                       href="/student_analytics">
+                        Student Analytics
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-custom"
+                       href="/students">
+                        Student Management
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="ms-auto d-flex gap-2">
+
+                <a href="/download_report"
+                   class="btn btn-outline-secondary btn-nav">
+                    Download Report
+                </a>
+
+                <a href="/send_report"
+                   class="btn btn-outline-secondary btn-nav">
+                    Send Report
+                </a>
+
+                <a href="/unknown_faces"
+                   class="btn btn-outline-danger btn-nav">
+                    Alerts
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- Main Content -->
+
+<div class="container py-5">
+
+    <div class="mb-5">
+
+        <h1 class="dashboard-title">
+            Dashboard
+        </h1>
+
+        <p class="subtitle">
+            Monitor attendance statistics, attendance status and reports.
+        </p>
+
+    </div>
+
+    <!-- Statistics -->
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="label">
+                    Total Students
+                </div>
+
+                <div class="value students">
+                    {{ total_students }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="label">
+                    Present
+                </div>
+
+                <div class="value present">
+                    {{ present }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="label">
+                    Late
+                </div>
+
+                <div class="value late">
+                    {{ late }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="label">
+                    Absent
+                </div>
+
+                <div class="value absent">
+                    {{ absent }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <form method="GET" action="/students" class="mb-3">
+
+    <div class="input-group">
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search by Name, Roll No, Department">
+
+        <button
+            class="btn btn-primary"
+            type="submit">
+
+            Search
+
+        </button>
+
+    </div>
+
+</form>
+
+    <!-- Attendance Table -->
+
+    <div class="attendance-card">
+
+        <div class="attendance-header">
+
+            <h3>
+                Today's Attendance Status
+            </h3>
+
+            <p>
+                Real-time attendance overview for all registered students.
+            </p>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+
+                    <tr>
+                        <th>Name</th>
+                        <th>Roll No</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for student in student_list %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ student[0] }}</strong>
+                        </td>
+
+                        <td>{{ student[1] }}</td>
+
+                        <td>{{ student[2] }}</td>
+
+                        <td>
+
+                            {% if student[3] == "Present" %}
+
+                                <span class="status-pill present-pill">
+                                    Present
+                                </span>
+
+                            {% elif student[3] == "Late" %}
+
+                                <span class="status-pill late-pill">
+                                    Late
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-pill absent-pill">
+                                    Absent
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        AI Attendance Prediction
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            background:#f8fafc;
+            font-family:'Inter',sans-serif;
+            color:#202124;
+        }
+
+        /* Navbar */
+
+        .navbar-custom{
+            background:#ffffff;
+            border-bottom:1px solid #e5e7eb;
+            padding:14px 0;
+        }
+
+        .brand{
+            font-size:24px;
+            font-weight:700;
+            color:#1a73e8;
+            text-decoration:none;
+        }
+
+        .nav-custom{
+            color:#5f6368 !important;
+            font-weight:500;
+            padding:10px 16px !important;
+            border-radius:10px;
+            transition:.2s;
+        }
+
+        .nav-custom:hover{
+            background:#f1f3f4;
+            color:#1a73e8 !important;
+        }
+
+        .btn-nav{
+            border-radius:10px;
+            font-weight:500;
+            padding:8px 16px;
+        }
+
+        /* Page Header */
+
+        .page-title{
+            font-size:36px;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        .subtitle{
+            color:#5f6368;
+            font-size:16px;
+            margin-bottom:40px;
+        }
+
+        /* Card */
+
+        .prediction-card{
+            background:#ffffff;
+            border-radius:20px;
+            box-shadow:0 2px 10px rgba(0,0,0,.06);
+            overflow:hidden;
+        }
+
+        .card-header-custom{
+            padding:24px;
+            border-bottom:1px solid #e5e7eb;
+            background:#ffffff;
+        }
+
+        .card-header-custom h3{
+            font-size:24px;
+            font-weight:700;
+            margin:0;
+        }
+
+        .card-header-custom p{
+            margin-top:8px;
+            margin-bottom:0;
+            color:#5f6368;
+        }
+
+        /* Table */
+
+        .table{
+            margin-bottom:0;
+        }
+
+        .table thead th{
+            background:#fafafa;
+            color:#5f6368;
+            font-weight:600;
+            border-bottom:2px solid #e5e7eb;
+        }
+
+        .table tbody tr:hover{
+            background:#f8fafc;
+        }
+
+        /* Risk Pills */
+
+        .risk-pill{
+            display:inline-block;
+            padding:8px 14px;
+            border-radius:999px;
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .risk-low{
+            background:#e6f4ea;
+            color:#188038;
+        }
+
+        .risk-medium{
+            background:#fef7e0;
+            color:#f9ab00;
+        }
+
+        .risk-high{
+            background:#fce8e6;
+            color:#d93025;
+        }
+
+        /* Footer Button */
+
+        .btn-dashboard{
+            border-radius:12px;
+            padding:12px 24px;
+            font-weight:600;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+
+    <div class="container">
+
+        <a href="/dashboard"
+           class="brand">
+
+            Smart Attendance
+
+        </a>
+
+        <div class="ms-auto">
+
+            <a href="/dashboard"
+               class="btn btn-outline-primary btn-nav">
+
+                Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- Content -->
+
+<div class="container py-5">
+
+    <div class="mb-5">
+
+        <h1 class="page-title">
+            AI Attendance Prediction
+        </h1>
+
+        <p class="subtitle">
+            Machine Learning based attendance risk analysis and early warning system.
+        </p>
+
+    </div>
+
+    <div class="prediction-card">
+
+        <div class="card-header-custom">
+
+            <h3>
+                Student Risk Assessment
+            </h3>
+
+            <p>
+                Identify students who may require attention based on attendance behavior.
+            </p>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student Name</th>
+                        <th>Present Days</th>
+                        <th>Late Days</th>
+                        <th>Attendance %</th>
+                        <th>Risk Level</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for student in predictions %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ student.name }}</strong>
+                        </td>
+
+                        <td>
+                            {{ student.present_days }}
+                        </td>
+
+                        <td>
+                            {{ student.late_days }}
+                        </td>
+
+                        <td>
+                            {{ student.attendance_percentage }}%
+                        </td>
+
+                        <td>
+
+                            {% if student.risk == "Low" %}
+
+                                <span class="risk-pill risk-low">
+                                    Low Risk
+                                </span>
+
+                            {% elif student.risk == "Medium" %}
+
+                                <span class="risk-pill risk-medium">
+                                    Medium Risk
+                                </span>
+
+                            {% else %}
+
+                                <span class="risk-pill risk-high">
+                                    High Risk
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+
+        <a href="/dashboard"
+           class="btn btn-primary btn-dashboard">
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
